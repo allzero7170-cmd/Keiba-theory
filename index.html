@@ -10,7 +10,7 @@
   <header class="app-header">
     <p class="eyebrow">スマホ・タブレット対応</p>
     <h1>競馬理論分析メモ</h1>
-    <p>コンピ順位やテクニカル6を入力して、軸候補・相手候補・買い目をブラウザに保存できます。</p>
+    <p>コンピ順位の馬番・馬名を分けて入力し、テクニカル6別の軸推奨・相手候補・買い目候補を自動確認できます。</p>
   </header>
 
   <main class="app-shell">
@@ -39,12 +39,25 @@
 
       <section class="section">
         <h2>コンピ順位 1位〜10位</h2>
+        <p class="section-lead">各順位ごとに馬番と馬名を分けて入力できます。</p>
         <div id="compiInputs" class="rank-grid" aria-label="コンピ順位入力"></div>
       </section>
 
       <section class="section">
         <h2>テクニカル6</h2>
         <div class="grid two-columns">
+          <label>
+            テクニカル6番号
+            <select id="technicalType" name="technicalType">
+              <option value="">選択してください</option>
+              <option value="1">テクニカル6-1：上位信頼型</option>
+              <option value="2">テクニカル6-2：上位2頭軸型</option>
+              <option value="3">テクニカル6-3：中穴相手厚め型</option>
+              <option value="4">テクニカル6-4：波乱警戒型</option>
+              <option value="5">テクニカル6-5：穴軸検討型</option>
+              <option value="6">テクニカル6-6：混戦ボックス型</option>
+            </select>
+          </label>
           <label>
             パターン
             <input type="text" id="technicalPattern" name="technicalPattern" placeholder="例：A-3 / 上位集中" />
@@ -53,6 +66,15 @@
             メモ
             <input type="text" id="technicalMemo" name="technicalMemo" placeholder="例：先行有利、穴は差し" />
           </label>
+        </div>
+        <div class="auto-recommendation">
+          <h3>テクニカル6別 自動候補</h3>
+          <dl id="autoRecommendation" class="recommendation-list">
+            <div class="recommendation-row">
+              <dt>状態</dt>
+              <dd>テクニカル6の番号を選ぶと、コンピ順位から自動で候補を表示します。</dd>
+            </div>
+          </dl>
         </div>
       </section>
 
