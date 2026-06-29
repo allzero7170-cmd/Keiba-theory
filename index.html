@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>競馬理論分析メモ</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <p class="eyebrow">スマホ・タブレット対応</p>
+    <h1>競馬理論分析メモ</h1>
+    <p>コンピ順位やテクニカル6を入力して、軸候補・相手候補・買い目をブラウザに保存できます。</p>
+  </header>
+
+  <main class="app-shell">
+    <form id="raceForm" class="card" autocomplete="off">
+      <section class="section">
+        <h2>レース情報</h2>
+        <div class="grid two-columns">
+          <label>
+            日付
+            <input type="date" id="raceDate" name="raceDate" />
+          </label>
+          <label>
+            競馬場
+            <input type="text" id="venue" name="venue" placeholder="例：東京" />
+          </label>
+          <label>
+            レース番号
+            <input type="number" id="raceNumber" name="raceNumber" min="1" max="12" placeholder="例：11" />
+          </label>
+          <label>
+            レース名
+            <input type="text" id="raceName" name="raceName" placeholder="例：日本ダービー" />
+          </label>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>コンピ順位 1位〜10位</h2>
+        <div id="compiInputs" class="rank-grid" aria-label="コンピ順位入力"></div>
+      </section>
+
+      <section class="section">
+        <h2>テクニカル6</h2>
+        <div class="grid two-columns">
+          <label>
+            パターン
+            <input type="text" id="technicalPattern" name="technicalPattern" placeholder="例：A-3 / 上位集中" />
+          </label>
+          <label>
+            メモ
+            <input type="text" id="technicalMemo" name="technicalMemo" placeholder="例：先行有利、穴は差し" />
+          </label>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>補助指標</h2>
+        <div class="grid indicator-grid">
+          <label>
+            階級指数
+            <input type="text" id="classIndex" name="classIndex" placeholder="例：7, 4, 10" />
+          </label>
+          <label>
+            調教評価
+            <input type="text" id="trainingRating" name="trainingRating" placeholder="例：A, B, A" />
+          </label>
+          <label>
+            朝イチ単勝順位
+            <input type="text" id="morningWinRank" name="morningWinRank" placeholder="例：3, 1, 8" />
+          </label>
+          <label>
+            朝イチ複勝順位
+            <input type="text" id="morningPlaceRank" name="morningPlaceRank" placeholder="例：2, 5, 6" />
+          </label>
+          <label>
+            馬連順位
+            <input type="text" id="quinellaRank" name="quinellaRank" placeholder="例：1-5, 3-8" />
+          </label>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>結論メモ</h2>
+        <label>
+          軸候補
+          <textarea id="keyCandidates" name="keyCandidates" rows="3" placeholder="例：7番、10番"></textarea>
+        </label>
+        <label>
+          相手候補
+          <textarea id="opponentCandidates" name="opponentCandidates" rows="3" placeholder="例：1, 3, 5, 8"></textarea>
+        </label>
+        <label>
+          買い目メモ
+          <textarea id="bettingMemo" name="bettingMemo" rows="5" placeholder="例：馬連 7-1,3,5 / 三連複 7-10-1,3,5"></textarea>
+        </label>
+      </section>
+
+      <div class="actions">
+        <button type="submit" class="primary">保存する</button>
+        <button type="button" id="clearButton" class="secondary">入力をクリア</button>
+      </div>
+      <p id="statusMessage" class="status" role="status" aria-live="polite"></p>
+    </form>
+
+    <aside class="card saved-card">
+      <div class="saved-header">
+        <h2>保存済みメモ</h2>
+        <button type="button" id="deleteButton" class="danger">保存データ削除</button>
+      </div>
+      <dl id="savedSummary" class="summary"></dl>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
