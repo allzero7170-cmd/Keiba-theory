@@ -1,27 +1,35 @@
 const STORAGE_KEY = "keibaTheoryAnalysisMemo";
+const COMPI_RANK_COUNT = 10;
+
 const compiInputs = document.querySelector("#compiInputs");
 const form = document.querySelector("#raceForm");
 const statusMessage = document.querySelector("#statusMessage");
 const savedSummary = document.querySelector("#savedSummary");
-const classIndexRows = document.querySelector("#classIndexRows");
-const addClassRowButton = document.querySelector("#addClassRowButton");
+const runnersCountInput = document.querySelector("#runnersCount");
+const classIndexInput = document.querySelector("#classIndex");
 
-const CLASS_INDEX_ROW_COUNT = 6;
-const CLASS_SCORES = {
-  maiden: 40,
-  oneWin: 50,
-  twoWin: 60,
-  threeWin: 70,
-  open: 80,
-  g3: 90,
-  g2: 95,
-  g1: 100,
+const CLASS_BASE_VALUES = {
+  5: [86, 70, 65, 53, 45],
+  6: [84, 72, 63, 56, 51, 43],
+  7: [83, 72, 64, 57, 52, 48, 43],
+  8: [83, 71, 64, 58, 54, 50, 47, 42],
+  9: [82, 71, 64, 58, 55, 52, 49, 46, 42],
+  10: [82, 71, 64, 58, 55, 53, 50, 48, 45, 41],
+  11: [82, 71, 64, 59, 56, 54, 51, 49, 47, 44, 41],
+  12: [81, 70, 64, 59, 56, 54, 52, 50, 48, 46, 43, 40],
+  13: [81, 70, 63, 59, 56, 54, 52, 50, 48, 47, 44, 42, 40],
+  14: [81, 70, 63, 59, 56, 54, 52, 50, 49, 47, 45, 43, 42, 40],
+  15: [80, 70, 63, 59, 56, 54, 52, 51, 49, 48, 46, 45, 43, 41, 40],
+  16: [80, 70, 63, 59, 56, 54, 52, 51, 49, 48, 47, 45, 44, 42, 41, 40],
+  17: [80, 70, 63, 59, 56, 54, 53, 51, 50, 48, 47, 46, 45, 44, 42, 41, 40],
+  18: [79, 70, 63, 59, 56, 55, 53, 51, 50, 49, 48, 47, 46, 44, 43, 42, 41, 40],
 };
 
 const fieldIds = [
   "raceDate",
   "venue",
   "raceNumber",
+  "runnersCount",
   "raceName",
   "technicalPattern",
   "technicalMemo",
@@ -36,90 +44,115 @@ const fieldIds = [
 ];
 
 function createCompiFields() {
-  for (let rank = 1; rank <= 10; rank += 1) {
-    const label = document.createElement("label");
-    label.textContent = `コンピ${rank}位`;
+  for (let rank = 1; rank <= COMPI_RANK_COUNT; rank += 1) {
+    const card = document.createElement("div");
+    card.className = "compi-rank-card";
+    card.innerHTML = `
+      <div class="rank-title">コンピ${rank}位</div>
+      <label>
+        馬番・馬名
+        <input type="text" id="compiRank${rank}" name="compiRank${rank}" placeholder="例：7 サンプルホース" />
+      </label>
+      <label>
+        コンピ指数
+        <input type="number" id="compiScore${rank}" name="compiScore${rank}" min="0" max="100" placeholder="例：60" />
+      </label>
+      <div class="class-result" aria-live="polite">
+        <span>基準値：<output id="baseValue${rank}">-</output></span>
+        <span>階級指数：<output id="classScore${rank}" class="class-score">-</output></span>
+        <span id="classJudge${rank}" class="class-judge">出走頭数と指数を入力</span>
+      </div>
+    `;
 
-    const input = document.createElement("input");
-    input.type = "text";
-    input.id = `compiRank${rank}`;
-    input.name = `compiRank${rank}`;
-    input.placeholder = "馬番・馬名";
-
-    label.append(input);
-    compiInputs.append(label);
-    fieldIds.push(input.id);
+    compiInputs.append(card);
+    fieldIds.push(`compiRank${rank}`, `compiScore${rank}`);
   }
 }
 
-function createClassIndexRow(index) {
-  const row = document.createElement("tr");
-  row.innerHTML = `
-    <td><input type="number" min="1" max="18" id="classHorseNumber${index}" aria-label="${index}行目の馬番" /></td>
-    <td><input type="text" id="classHorseName${index}" aria-label="${index}行目の馬名" placeholder="馬名" /></td>
-    <td>
-      <select id="classGrade${index}" aria-label="${index}行目のクラス">
-        <option value="">選択</option>
-        <option value="maiden">新馬/未勝利</option>
-        <option value="oneWin">1勝</option>
-        <option value="twoWin">2勝</option>
-        <option value="threeWin">3勝</option>
-        <option value="open">OP/L</option>
-        <option value="g3">G3</option>
-        <option value="g2">G2</option>
-        <option value="g1">G1</option>
-      </select>
-    </td>
-    <td><input type="number" min="1" max="18" id="classFinish${index}" aria-label="${index}行目の着順" /></td>
-    <td><input type="number" min="0" step="0.1" id="classMargin${index}" aria-label="${index}行目の着差" placeholder="秒" /></td>
-    <td><output id="classScore${index}" aria-label="${index}行目の階級指数">-</output></td>
-  `;
-  classIndexRows.append(row);
-  ["classHorseNumber", "classHorseName", "classGrade", "classFinish", "classMargin"].forEach((prefix) => {
-    fieldIds.push(`${prefix}${index}`);
-  });
+function getRunnersCount() {
+  const value = Number.parseInt(runnersCountInput.value, 10);
+  return Number.isInteger(value) ? value : null;
 }
 
-function createClassIndexRows(count = CLASS_INDEX_ROW_COUNT) {
-  for (let index = 1; index <= count; index += 1) {
-    createClassIndexRow(index);
+function getBaseValue(rank) {
+  const runnersCount = getRunnersCount();
+  const baseValues = runnersCount ? CLASS_BASE_VALUES[runnersCount] : null;
+  return baseValues?.[rank - 1] ?? null;
+}
+
+function getCompiScore(rank) {
+  const rawValue = document.querySelector(`#compiScore${rank}`).value.trim();
+  if (!rawValue) return null;
+
+  const score = Number(rawValue);
+  return Number.isFinite(score) ? score : null;
+}
+
+function formatSigned(value) {
+  if (value > 0) return `+${value}`;
+  return String(value);
+}
+
+function getClassJudge(classIndex) {
+  if (classIndex >= 5) return "特注＋";
+  if (classIndex >= 3) return "強め＋";
+  if (classIndex >= 1) return "プラス";
+  if (classIndex === 0) return "基準";
+  if (classIndex <= -3) return "弱め";
+  return "マイナス";
+}
+
+function setClassScoreStyle(output, classIndex) {
+  output.className = "class-score";
+  if (classIndex >= 3) {
+    output.classList.add("strong-plus");
+  } else if (classIndex > 0) {
+    output.classList.add("plus");
+  } else if (classIndex < 0) {
+    output.classList.add("minus");
   }
-}
-
-function calculateClassIndex(rowNumber) {
-  const grade = document.querySelector(`#classGrade${rowNumber}`).value;
-  const finish = Number(document.querySelector(`#classFinish${rowNumber}`).value);
-  const margin = Number(document.querySelector(`#classMargin${rowNumber}`).value || 0);
-
-  if (!grade || !finish) return null;
-
-  const finishBonus = Math.max(0, 10 - finish) / 2;
-  const marginPenalty = margin * 2;
-  return CLASS_SCORES[grade] + finishBonus - marginPenalty;
-}
-
-function getClassRowCount() {
-  return classIndexRows.children.length;
 }
 
 function updateClassIndexes() {
   const summaries = [];
 
-  Array.from(classIndexRows.children).forEach((_, index) => {
-    const rowNumber = index + 1;
-    const score = calculateClassIndex(rowNumber);
-    const output = document.querySelector(`#classScore${rowNumber}`);
-    output.value = score === null ? "-" : score.toFixed(1);
-    output.textContent = output.value;
+  for (let rank = 1; rank <= COMPI_RANK_COUNT; rank += 1) {
+    const horse = document.querySelector(`#compiRank${rank}`).value.trim();
+    const compiScore = getCompiScore(rank);
+    const baseValue = getBaseValue(rank);
+    const baseOutput = document.querySelector(`#baseValue${rank}`);
+    const scoreOutput = document.querySelector(`#classScore${rank}`);
+    const judgeOutput = document.querySelector(`#classJudge${rank}`);
 
-    const horseNumber = document.querySelector(`#classHorseNumber${rowNumber}`).value.trim();
-    const horseName = document.querySelector(`#classHorseName${rowNumber}`).value.trim();
-    if (score !== null && (horseNumber || horseName)) {
-      summaries.push(`${horseNumber || horseName}: ${score.toFixed(1)}`);
+    baseOutput.textContent = baseValue ?? "-";
+
+    if (compiScore === null || baseValue === null) {
+      scoreOutput.textContent = "-";
+      scoreOutput.className = "class-score";
+      judgeOutput.textContent = baseValue === null ? "出走頭数を入力" : "指数を入力";
+      judgeOutput.className = "class-judge";
+
+      if (horse || compiScore !== null) {
+        summaries.push(`${rank}位 ${horse || "馬名未入力"}: 未計算`);
+      }
+      continue;
     }
-  });
 
-  document.querySelector("#classIndex").value = summaries.join(", ");
+    const classIndex = compiScore - baseValue;
+    const signedClassIndex = formatSigned(classIndex);
+    const judge = getClassJudge(classIndex);
+
+    scoreOutput.textContent = signedClassIndex;
+    setClassScoreStyle(scoreOutput, classIndex);
+    judgeOutput.textContent = judge;
+    judgeOutput.className = "class-judge filled";
+
+    if (horse || compiScore !== null) {
+      summaries.push(`${rank}位 ${horse || "馬名未入力"}: ${signedClassIndex}（指数${compiScore}/基準${baseValue}）`);
+    }
+  }
+
+  classIndexInput.value = summaries.join(", ");
 }
 
 function collectFormData() {
@@ -127,15 +160,10 @@ function collectFormData() {
   return fieldIds.reduce((data, id) => {
     data[id] = document.querySelector(`#${id}`).value.trim();
     return data;
-  }, { classIndexRowCount: String(getClassRowCount()) });
+  }, {});
 }
 
 function fillForm(data) {
-  const savedRowCount = Number(data?.classIndexRowCount || CLASS_INDEX_ROW_COUNT);
-  while (getClassRowCount() < savedRowCount) {
-    createClassIndexRow(getClassRowCount() + 1);
-  }
-
   fieldIds.forEach((id) => {
     const field = document.querySelector(`#${id}`);
     field.value = data?.[id] ?? "";
@@ -153,7 +181,9 @@ function renderSummary(data) {
 
   const rows = [
     ["レース", `${data.raceDate || "日付未入力"} ${data.venue || "競馬場未入力"} ${data.raceNumber ? `${data.raceNumber}R` : ""} ${data.raceName || ""}`],
-    ["コンピ上位", [1, 2, 3, 4, 5].map((rank) => `${rank}位: ${data[`compiRank${rank}`] || "-"}`).join("\n")],
+    ["出走頭数", data.runnersCount ? `${data.runnersCount}頭` : "-"],
+    ["コンピ上位", [1, 2, 3, 4, 5].map((rank) => `${rank}位: ${data[`compiRank${rank}`] || "-"}${data[`compiScore${rank}`] ? ` / 指数${data[`compiScore${rank}`]}` : ""}`).join("\n")],
+    ["階級指数", data.classIndex || "-"],
     ["テクニカル6", [data.technicalPattern, data.technicalMemo].filter(Boolean).join(" / ") || "-"],
     ["軸候補", data.keyCandidates || "-"],
     ["相手候補", data.opponentCandidates || "-"],
@@ -186,15 +216,12 @@ function loadData() {
 }
 
 createCompiFields();
-createClassIndexRows();
 loadData();
 
-classIndexRows.addEventListener("input", updateClassIndexes);
-classIndexRows.addEventListener("change", updateClassIndexes);
-
-addClassRowButton.addEventListener("click", () => {
-  createClassIndexRow(classIndexRows.children.length + 1);
-});
+compiInputs.addEventListener("input", updateClassIndexes);
+compiInputs.addEventListener("change", updateClassIndexes);
+runnersCountInput.addEventListener("input", updateClassIndexes);
+runnersCountInput.addEventListener("change", updateClassIndexes);
 
 form.addEventListener("submit", (event) => {
   event.preventDefault();
