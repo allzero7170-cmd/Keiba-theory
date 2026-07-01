@@ -10,7 +10,7 @@
   <header class="app-header">
     <p class="eyebrow">スマホ・タブレット対応</p>
     <h1>競馬理論分析メモ</h1>
-    <p>コンピ順位やテクニカル6を入力して、軸候補・相手候補・買い目をブラウザに保存できます。</p>
+    <p>コンピ順位・階級指数・テクニカル6を入力して、軸候補・相手候補・買い目をブラウザに保存できます。</p>
   </header>
 
   <main class="app-shell">
@@ -31,6 +31,10 @@
             <input type="number" id="raceNumber" name="raceNumber" min="1" max="12" placeholder="例：11" />
           </label>
           <label>
+            出走頭数
+            <input type="number" id="runnersCount" name="runnersCount" min="5" max="18" placeholder="例：18" />
+          </label>
+          <label>
             レース名
             <input type="text" id="raceName" name="raceName" placeholder="例：日本ダービー" />
           </label>
@@ -38,8 +42,22 @@
       </section>
 
       <section class="section">
-        <h2>コンピ順位 1位〜10位</h2>
+        <div class="section-heading compact-heading">
+          <div>
+            <h2>コンピ順位 1位〜10位</h2>
+            <p>馬番・馬名とコンピ指数を入れると、出走頭数と順位から基準値を引いて階級指数を自動計算します。</p>
+          </div>
+        </div>
         <div id="compiInputs" class="rank-grid" aria-label="コンピ順位入力"></div>
+      </section>
+
+      <section class="section" aria-labelledby="classIndexGuideTitle">
+        <h2 id="classIndexGuideTitle">階級指数の見方</h2>
+        <div class="formula-box">
+          <strong>計算式</strong>：階級指数 = コンピ指数値 − 基準値
+          <br />基準値は、出走頭数ごとのコンピ順位別基準表から自動判定します。
+        </div>
+        <p class="helper-text">例：18頭立て・コンピ5位・コンピ指数60 → 基準値56 → 階級指数 +4。プラス幅が大きいほど、その順位帯ではお買い得度が高い馬として扱います。</p>
       </section>
 
       <section class="section">
@@ -47,7 +65,7 @@
         <div class="grid two-columns">
           <label>
             パターン
-            <input type="text" id="technicalPattern" name="technicalPattern" placeholder="例：A-3 / 上位集中" />
+            <input type="text" id="technicalPattern" name="technicalPattern" placeholder="例：P5 / 上位集中" />
           </label>
           <label>
             メモ
@@ -56,42 +74,12 @@
         </div>
       </section>
 
-      <section class="section class-calculator" aria-labelledby="classCalculatorTitle">
-        <div class="section-heading">
-          <div>
-            <h2 id="classCalculatorTitle">階級指数計算</h2>
-            <p>クラス点・着順・着差から階級指数を自動計算します。高いほど上位評価です。</p>
-          </div>
-          <button type="button" id="addClassRowButton" class="secondary small-button">行を追加</button>
-        </div>
-        <div class="formula-box">
-          <strong>計算式</strong>：階級指数 = クラス点 + 着順補正 + 着差補正
-          <br />着順補正 = max(0, 10 - 着順) / 2、着差補正 = -着差 × 2
-        </div>
-        <div class="class-table-wrap">
-          <table class="class-table">
-            <thead>
-              <tr>
-                <th scope="col">馬番</th>
-                <th scope="col">馬名</th>
-                <th scope="col">クラス</th>
-                <th scope="col">着順</th>
-                <th scope="col">着差</th>
-                <th scope="col">指数</th>
-              </tr>
-            </thead>
-            <tbody id="classIndexRows"></tbody>
-          </table>
-        </div>
-        <p class="helper-text">クラス点：新馬/未勝利=40、1勝=50、2勝=60、3勝=70、OP/L=80、G3=90、G2=95、G1=100</p>
-      </section>
-
       <section class="section">
         <h2>補助指標</h2>
         <div class="grid indicator-grid">
           <label>
             階級指数（自動反映）
-            <input type="text" id="classIndex" name="classIndex" placeholder="例：7: 92.5, 4: 88.0" />
+            <input type="text" id="classIndex" name="classIndex" placeholder="例：5位 7番: +4" readonly />
           </label>
           <label>
             調教評価
