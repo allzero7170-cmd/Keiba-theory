@@ -10,7 +10,7 @@
   <header class="app-header">
     <p class="eyebrow">スマホ・タブレット対応</p>
     <h1>競馬理論分析メモ</h1>
-    <p>コンピ順位・階級指数・テクニカル6を入力して、軸候補・相手候補・買い目をブラウザに保存できます。</p>
+    <p>コンピ指数・朝イチオッズ・調教データだけで合計点を作り、軸候補・相手候補を自動判定します。</p>
   </header>
 
   <main class="app-shell">
@@ -44,70 +44,47 @@
       <section class="section">
         <div class="section-heading compact-heading">
           <div>
-            <h2>コンピ順位 1位〜10位</h2>
-            <p>馬番・馬名とコンピ指数を入れると、出走頭数と順位から基準値を引いて階級指数を自動計算します。</p>
+            <h2>コンピ・朝イチ・調教 入力</h2>
+            <p>コンピ順位1位〜10位に、馬番・馬名、コンピ指数、朝イチ単勝順位、朝イチ複勝順位、調教評価を入れます。</p>
           </div>
+        </div>
+        <div class="formula-box">
+          <strong>合計点</strong>：コンピ順位点 + 階級指数点 + 朝イチ異常点 + 調教点 + 組み合わせボーナス
         </div>
         <div id="compiInputs" class="rank-grid" aria-label="コンピ順位入力"></div>
       </section>
 
-      <section class="section" aria-labelledby="classIndexGuideTitle">
-        <h2 id="classIndexGuideTitle">階級指数の見方</h2>
-        <div class="formula-box">
-          <strong>計算式</strong>：階級指数 = コンピ指数値 − 基準値
-          <br />基準値は、出走頭数ごとのコンピ順位別基準表から自動判定します。
-        </div>
-        <p class="helper-text">例：18頭立て・コンピ5位・コンピ指数60 → 基準値56 → 階級指数 +4。プラス幅が大きいほど、その順位帯ではお買い得度が高い馬として扱います。</p>
-      </section>
-
       <section class="section">
-        <h2>テクニカル6</h2>
-        <div class="grid two-columns">
-          <label>
-            パターン
-            <input type="text" id="technicalPattern" name="technicalPattern" placeholder="例：P5 / 上位集中" />
-          </label>
-          <label>
-            メモ
-            <input type="text" id="technicalMemo" name="technicalMemo" placeholder="例：先行有利、穴は差し" />
-          </label>
-        </div>
-      </section>
-
-      <section class="section">
-        <h2>補助指標</h2>
+        <h2>自動判定</h2>
         <div class="grid indicator-grid">
           <label>
-            階級指数（自動反映）
-            <input type="text" id="classIndex" name="classIndex" placeholder="例：5位 7番: +4" readonly />
+            軸候補（自動）
+            <textarea id="autoAxisCandidates" name="autoAxisCandidates" rows="3" readonly placeholder="入力すると自動表示"></textarea>
           </label>
           <label>
-            調教評価
-            <input type="text" id="trainingRating" name="trainingRating" placeholder="例：A, B, A" />
+            相手候補（自動）
+            <textarea id="autoOpponentCandidates" name="autoOpponentCandidates" rows="3" readonly placeholder="入力すると自動表示"></textarea>
           </label>
           <label>
-            朝イチ単勝順位
-            <input type="text" id="morningWinRank" name="morningWinRank" placeholder="例：3, 1, 8" />
+            階級指数一覧（自動）
+            <textarea id="classIndex" name="classIndex" rows="4" readonly placeholder="例：5位 7番: +4"></textarea>
           </label>
           <label>
-            朝イチ複勝順位
-            <input type="text" id="morningPlaceRank" name="morningPlaceRank" placeholder="例：2, 5, 6" />
-          </label>
-          <label>
-            馬連順位
-            <input type="text" id="quinellaRank" name="quinellaRank" placeholder="例：1-5, 3-8" />
+            合計点一覧（自動）
+            <textarea id="scoreSummary" name="scoreSummary" rows="5" readonly placeholder="得点順に自動表示"></textarea>
           </label>
         </div>
+        <p class="helper-text">第一段階の仮ルールです。実戦結果を見ながら、朝イチ異常・調教評価・階級指数の加点幅を調整していきます。</p>
       </section>
 
       <section class="section">
         <h2>結論メモ</h2>
         <label>
-          軸候補
-          <textarea id="keyCandidates" name="keyCandidates" rows="3" placeholder="例：7番、10番"></textarea>
+          軸候補メモ
+          <textarea id="keyCandidates" name="keyCandidates" rows="3" placeholder="例：自動判定を見て、最終軸を手書き"></textarea>
         </label>
         <label>
-          相手候補
+          相手候補メモ
           <textarea id="opponentCandidates" name="opponentCandidates" rows="3" placeholder="例：1, 3, 5, 8"></textarea>
         </label>
         <label>
