@@ -58,7 +58,7 @@ h2 {
 .app-shell {
   display: grid;
   gap: 18px;
-  width: min(100%, 920px);
+  width: min(100%, 980px);
   margin: 0 auto;
   padding: 0 14px 32px;
 }
@@ -92,7 +92,8 @@ h2 {
 
 .two-columns,
 .indicator-grid,
-.rank-grid {
+.rank-grid,
+.mini-grid {
   grid-template-columns: 1fr;
 }
 
@@ -116,6 +117,7 @@ select {
   font: inherit;
 }
 
+textarea[readonly],
 input[readonly] {
   background: #fbf3e9;
   color: var(--accent-dark);
@@ -259,7 +261,8 @@ button {
   font-weight: 700;
 }
 
-.class-score {
+.class-score,
+.total-score {
   display: inline-grid;
   min-width: 3.5em;
   min-height: 34px;
@@ -270,17 +273,30 @@ button {
   font-weight: 900;
 }
 
-.class-score.plus {
+.class-score.plus,
+.total-score.opponent {
   background: #fff0d7;
   color: var(--accent-dark);
 }
 
-.class-score.strong-plus {
+.class-score.strong-plus,
+.total-score.main-opponent {
+  background: #ffd9b5;
+  color: var(--accent-dark);
+}
+
+.total-score.axis {
   background: var(--accent);
   color: #fff;
 }
 
-.class-score.minus {
+.total-score.best {
+  background: #3d332c;
+  color: #fff;
+}
+
+.class-score.minus,
+.total-score.weak {
   background: #ece7e1;
   color: var(--muted);
 }
@@ -295,18 +311,14 @@ button {
   font-weight: 900;
 }
 
-.small-button {
-  min-height: 42px;
-  padding: 8px 14px;
-}
-
 @media (min-width: 640px) {
   .card {
     padding: 24px;
   }
 
   .two-columns,
-  .rank-grid {
+  .rank-grid,
+  .mini-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -326,9 +338,9 @@ button {
   }
 }
 
-@media (min-width: 860px) {
+@media (min-width: 900px) {
   .app-shell {
-    grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.7fr);
+    grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.75fr);
     align-items: start;
   }
 
