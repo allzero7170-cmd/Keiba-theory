@@ -56,12 +56,42 @@
         </div>
       </section>
 
+      <section class="section class-calculator" aria-labelledby="classCalculatorTitle">
+        <div class="section-heading">
+          <div>
+            <h2 id="classCalculatorTitle">階級指数計算</h2>
+            <p>クラス点・着順・着差から階級指数を自動計算します。高いほど上位評価です。</p>
+          </div>
+          <button type="button" id="addClassRowButton" class="secondary small-button">行を追加</button>
+        </div>
+        <div class="formula-box">
+          <strong>計算式</strong>：階級指数 = クラス点 + 着順補正 + 着差補正
+          <br />着順補正 = max(0, 10 - 着順) / 2、着差補正 = -着差 × 2
+        </div>
+        <div class="class-table-wrap">
+          <table class="class-table">
+            <thead>
+              <tr>
+                <th scope="col">馬番</th>
+                <th scope="col">馬名</th>
+                <th scope="col">クラス</th>
+                <th scope="col">着順</th>
+                <th scope="col">着差</th>
+                <th scope="col">指数</th>
+              </tr>
+            </thead>
+            <tbody id="classIndexRows"></tbody>
+          </table>
+        </div>
+        <p class="helper-text">クラス点：新馬/未勝利=40、1勝=50、2勝=60、3勝=70、OP/L=80、G3=90、G2=95、G1=100</p>
+      </section>
+
       <section class="section">
         <h2>補助指標</h2>
         <div class="grid indicator-grid">
           <label>
-            階級指数
-            <input type="text" id="classIndex" name="classIndex" placeholder="例：7, 4, 10" />
+            階級指数（自動反映）
+            <input type="text" id="classIndex" name="classIndex" placeholder="例：7: 92.5, 4: 88.0" />
           </label>
           <label>
             調教評価
