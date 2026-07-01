@@ -45,7 +45,7 @@
         <div class="section-heading compact-heading">
           <div>
             <h2>コンピ・朝イチ・調教 入力</h2>
-            <p>コンピ順位1位〜10位に、馬番・馬名、コンピ指数、朝イチ単勝順位、朝イチ複勝順位、調教評価を入れます。</p>
+            <p>基本判定はコンピ1位〜10位まで。11位以下は通常候補から外し、例外メモで別管理します。</p>
           </div>
         </div>
         <div class="formula-box">
@@ -75,6 +75,18 @@
           </label>
         </div>
         <p class="helper-text">第一段階の仮ルールです。実戦結果を見ながら、朝イチ異常・調教評価・階級指数の加点幅を調整していきます。</p>
+      </section>
+
+      <section class="section">
+        <h2>11位以下イレギュラー</h2>
+        <div class="formula-box caution-box">
+          <strong>基本方針</strong>：コンピ11位以下は、通常の軸・相手判定には入れません。調教が良すぎる、初ブリンカー、朝イチが異常に売れているなど、どうしても臭い馬だけ別メモします。
+        </div>
+        <label>
+          イレギュラー馬メモ
+          <textarea id="irregularMemo" name="irregularMemo" rows="4" placeholder="例：12位 8番 調教A+＋初ブリンカー。ただしP1/P2なら基本ケン、買っても単複のみ"></textarea>
+        </label>
+        <p class="helper-text">特にテクニカル6のP1・P2寄りでは、3連複狙いではなく、基本ケンまたは単複のみの扱いにします。</p>
       </section>
 
       <section class="section">
