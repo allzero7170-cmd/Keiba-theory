@@ -104,7 +104,8 @@ label {
 }
 
 input,
-textarea {
+textarea,
+select {
   width: 100%;
   min-height: 48px;
   border: 1px solid var(--border);
@@ -115,12 +116,19 @@ textarea {
   font: inherit;
 }
 
+input[readonly] {
+  background: #fbf3e9;
+  color: var(--accent-dark);
+  font-weight: 700;
+}
+
 textarea {
   resize: vertical;
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   outline: 3px solid rgba(179, 35, 36, 0.18);
   border-color: var(--accent);
 }
@@ -191,6 +199,107 @@ button {
   white-space: pre-wrap;
 }
 
+.section-heading {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.section-heading h2 {
+  margin-bottom: 6px;
+}
+
+.section-heading p,
+.helper-text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.compact-heading {
+  margin-bottom: 12px;
+}
+
+.formula-box {
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px dashed rgba(179, 35, 36, 0.35);
+  border-radius: 14px;
+  background: #fff7ef;
+  color: var(--text);
+}
+
+.compi-rank-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fffaf3;
+}
+
+.rank-title {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: #efe3d5;
+  color: var(--text);
+  font-weight: 900;
+}
+
+.class-result {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 14px;
+  background: #fbf3e9;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.class-score {
+  display: inline-grid;
+  min-width: 3.5em;
+  min-height: 34px;
+  place-items: center;
+  border-radius: 999px;
+  background: #efe3d5;
+  color: var(--text);
+  font-weight: 900;
+}
+
+.class-score.plus {
+  background: #fff0d7;
+  color: var(--accent-dark);
+}
+
+.class-score.strong-plus {
+  background: var(--accent);
+  color: #fff;
+}
+
+.class-score.minus {
+  background: #ece7e1;
+  color: var(--muted);
+}
+
+.class-judge {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.class-judge.filled {
+  color: var(--text);
+  font-weight: 900;
+}
+
+.small-button {
+  min-height: 42px;
+  padding: 8px 14px;
+}
+
 @media (min-width: 640px) {
   .card {
     padding: 24px;
@@ -210,6 +319,11 @@ button {
     align-items: center;
     grid-template-columns: 1fr 1fr;
   }
+
+  .section-heading {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
 }
 
 @media (min-width: 860px) {
@@ -221,88 +335,5 @@ button {
   .saved-card {
     position: sticky;
     top: 18px;
-  }
-}
-
-.section-heading {
-  display: grid;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.section-heading h2 {
-  margin-bottom: 6px;
-}
-
-.section-heading p,
-.helper-text {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.92rem;
-}
-
-.formula-box {
-  margin-bottom: 12px;
-  padding: 12px;
-  border: 1px dashed rgba(179, 35, 36, 0.35);
-  border-radius: 14px;
-  background: #fff7ef;
-  color: var(--text);
-}
-
-.class-table-wrap {
-  overflow-x: auto;
-  margin-bottom: 10px;
-}
-
-.class-table {
-  width: 100%;
-  min-width: 680px;
-  border-collapse: collapse;
-}
-
-.class-table th,
-.class-table td {
-  padding: 8px;
-  border-bottom: 1px solid var(--border);
-  text-align: left;
-  vertical-align: middle;
-}
-
-.class-table th {
-  color: var(--muted);
-  font-size: 0.86rem;
-}
-
-.class-table input,
-.class-table select {
-  min-height: 42px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 8px 10px;
-  background: #fff;
-  color: var(--text);
-  font: inherit;
-}
-
-.class-table output {
-  display: inline-grid;
-  min-width: 4.5em;
-  min-height: 42px;
-  place-items: center;
-  border-radius: 999px;
-  background: #efe3d5;
-  font-weight: 800;
-}
-
-.small-button {
-  min-height: 42px;
-  padding: 8px 14px;
-}
-
-@media (min-width: 640px) {
-  .section-heading {
-    grid-template-columns: 1fr auto;
-    align-items: start;
   }
 }
