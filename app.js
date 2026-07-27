@@ -10,6 +10,7 @@ const classIndexInput = document.querySelector("#classIndex");
 const scoreSummaryInput = document.querySelector("#scoreSummary");
 const autoAxisCandidatesInput = document.querySelector("#autoAxisCandidates");
 const autoOpponentCandidatesInput = document.querySelector("#autoOpponentCandidates");
+const blinkerCandidatesInput = document.querySelector("#blinkerCandidates");
 
 const CLASS_BASE_VALUES = {
   5: [86, 70, 65, 53, 45],
@@ -55,6 +56,7 @@ const fieldIds = [
   "scoreSummary",
   "autoAxisCandidates",
   "autoOpponentCandidates",
+  "blinkerCandidates",
   "irregularMemo",
   "keyCandidates",
   "opponentCandidates",
@@ -89,6 +91,26 @@ function createCompiFields() {
         調教評価
         <input type="text" id="trainingRating${rank}" name="trainingRating${rank}" placeholder="例：A / B+ / ◎" />
       </label>
+      <div class="grid mini-grid blinker-fields">
+        <label>
+          ブリンカー
+          <select id="blinkerStatus${rank}" name="blinkerStatus${rank}">
+            <option value="">情報なし・非着用</option>
+            <option value="初着用">初着用</option>
+            <option value="継続着用">継続着用</option>
+            <option value="再着用">再着用</option>
+          </select>
+        </label>
+        <label>
+          着用後の改善
+          <select id="blinkerEffect${rank}" name="blinkerEffect${rank}">
+            <option value="">未確認</option>
+            <option value="改善あり">改善あり</option>
+            <option value="変化なし">変化なし</option>
+            <option value="悪化">悪化</option>
+          </select>
+        </label>
+      </div>
       <div class="class-result" aria-live="polite">
         <span>基準値：<output id="baseValue${rank}">-</output></span>
         <span>階級指数：<output id="classScore${rank}" class="class-score">-</output></span>
@@ -104,6 +126,8 @@ function createCompiFields() {
       `morningWinRank${rank}`,
       `morningPlaceRank${rank}`,
       `trainingRating${rank}`,
+      `blinkerStatus${rank}`,
+      `blinkerEffect${rank}`,
     );
   }
 }
@@ -152,6 +176,18 @@ function getClassIndexPoint(classIndex) {
   if (classIndex <= -5) return -8;
   if (classIndex <= -3) return -5;
   return -2;
+}
+
+function getBlinkerScore(status, effect) {
+  let score = 0;
+  if (status === "初着用") score += 4;
+  else if (status === "再着用") score += 3;
+  else if (status === "継続着用") score += 1;
+
+  if (effect === "改善あり") score += 6;
+  else if (effect === "変化なし") score -= 2;
+  else if (effect === "悪化") score -= 5;
+  return score;
 }
 
 function getMorningRankPoint(compiRank, morningRank) {
@@ -251,7 +287,9 @@ function evaluateHorse(rank) {
   const winRank = getNumberValue(`morningWinRank${rank}`);
   const placeRank = getNumberValue(`morningPlaceRank${rank}`);
   const trainingRating = document.querySelector(`#trainingRating${rank}`).value.trim();
-  const hasAnyInput = horse || compiScore !== null || winRank !== null || placeRank !== null || trainingRating;
+  const blinkerStatus = document.querySelector(`#blinkerStatus${rank}`).value;
+  const blinkerEffect = document.querySelector(`#blinkerEffect${rank}`).value;
+  const hasAnyInput = horse || compiScore !== null || winRank !== null || placeRank !== null || trainingRating || blinkerStatus || blinkerEffect;
 
   if (!hasAnyInput) return null;
 
@@ -263,8 +301,9 @@ function evaluateHorse(rank) {
   const placePoint = getMorningRankPoint(rank, placeRank);
   const morningPoint = winPoint + placePoint;
   const trainingScore = getTrainingScore(trainingRating);
+  const blinkerScore = getBlinkerScore(blinkerStatus, blinkerEffect);
   const comboBonus = getComboBonus({ compiRank: rank, classIndex, morningPoint, trainingScore, winRank, placeRank });
-  const totalScore = rankPoint + classPoint + morningPoint + trainingScore + comboBonus;
+  const totalScore = rankPoint + classPoint + morningPoint + trainingScore + blinkerScore + comboBonus;
   const role = getRoleLabel(totalScore);
 
   return {
@@ -280,6 +319,9 @@ function evaluateHorse(rank) {
     morningPoint,
     trainingRating,
     trainingScore,
+    blinkerStatus,
+    blinkerEffect,
+    blinkerScore,
     comboBonus,
     totalScore,
     role,
@@ -292,7 +334,19 @@ function formatHorseLabel(evaluation) {
 
 function formatBreakdown(evaluation) {
   const classText = evaluation.classIndex === null ? "階級未計算" : `階級${formatSigned(evaluation.classIndex)}`;
-  return `${formatHorseLabel(evaluation)}：${evaluation.totalScore}点（${evaluation.role} / ${classText} / 朝${evaluation.morningPoint} / 調教${evaluation.trainingScore} / 複合${evaluation.comboBonus}）`;
+  const blinkerText = evaluation.blinkerStatus ? `B${evaluation.blinkerScore}` : "Bなし";
+  return `${formatHorseLabel(evaluation)}：${evaluation.totalScore}点（${evaluation.role} / ${classText} / 朝${evaluation.morningPoint} / 調教${evaluation.trainingScore} / ${blinkerText} / 複合${evaluation.comboBonus}）`;
+}
+
+function formatBlinkerSummary(evaluation) {
+  const oddsRelation = evaluation.winRank === null
+    ? "単勝順位未入力"
+    : evaluation.winRank < evaluation.rank
+      ? `単勝${evaluation.winRank}位（コンピより${evaluation.rank - evaluation.winRank}段階売れ）`
+      : evaluation.winRank === evaluation.rank
+        ? `単勝${evaluation.winRank}位（コンピ同順）`
+        : `単勝${evaluation.winRank}位（コンピより${evaluation.winRank - evaluation.rank}段階人気薄）`;
+  return `${formatHorseLabel(evaluation)}：${evaluation.blinkerStatus}${evaluation.blinkerEffect ? `・${evaluation.blinkerEffect}` : ""} / コンピ${evaluation.rank}位 / ${oddsRelation} / B点${formatSigned(evaluation.blinkerScore)}`;
 }
 
 function updateRecommendations() {
@@ -348,6 +402,11 @@ function updateRecommendations() {
   scoreSummaryInput.value = sortedEvaluations.map(formatBreakdown).join("\n");
   autoAxisCandidatesInput.value = fallbackAxisCandidates.map(formatBreakdown).join("\n");
   autoOpponentCandidatesInput.value = opponentCandidates.map(formatBreakdown).join("\n");
+  blinkerCandidatesInput.value = sortedEvaluations
+    .filter((item) => item.blinkerStatus)
+    .sort((a, b) => b.blinkerScore - a.blinkerScore || b.totalScore - a.totalScore)
+    .map(formatBlinkerSummary)
+    .join("\n");
 }
 
 function collectFormData() {
@@ -380,6 +439,7 @@ function renderSummary(data) {
     ["自動軸候補", data.autoAxisCandidates || "-"],
     ["自動相手候補", data.autoOpponentCandidates || "-"],
     ["11位以下イレギュラー", data.irregularMemo || "-"],
+    ["ブリンカー注目馬", data.blinkerCandidates || "-"],
     ["合計点上位", data.scoreSummary || "-"],
     ["最終軸メモ", data.keyCandidates || "-"],
     ["相手メモ", data.opponentCandidates || "-"],
