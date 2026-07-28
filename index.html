@@ -10,7 +10,7 @@
   <header class="app-header">
     <p class="eyebrow">スマホ・タブレット対応</p>
     <h1>競馬理論分析メモ</h1>
-    <p>コンピ指数・朝イチオッズ・調教データだけで合計点を作り、軸候補・相手候補を自動判定します。</p>
+    <p>コンピ指数・朝イチオッズ・調教・ブリンカー材料を整理し、軸候補・相手候補を自動判定します。</p>
   </header>
 
   <main class="app-shell">
@@ -44,12 +44,12 @@
       <section class="section">
         <div class="section-heading compact-heading">
           <div>
-            <h2>コンピ・朝イチ・調教 入力</h2>
+            <h2>コンピ・朝イチ・調教・ブリンカー 入力</h2>
             <p>基本判定はコンピ1位〜10位まで。11位以下は通常候補から外し、例外メモで別管理します。</p>
           </div>
         </div>
         <div class="formula-box">
-          <strong>合計点</strong>：コンピ順位点 + 階級指数点 + 朝イチ異常点 + 調教点 + 組み合わせボーナス
+          <strong>合計点</strong>：コンピ順位点 + 階級指数点 + 朝イチ異常点 + 調教点 + ブリンカー点 + 組み合わせボーナス
         </div>
         <div id="compiInputs" class="rank-grid" aria-label="コンピ順位入力"></div>
       </section>
@@ -73,8 +73,16 @@
             合計点一覧（自動）
             <textarea id="scoreSummary" name="scoreSummary" rows="5" readonly placeholder="得点順に自動表示"></textarea>
           </label>
+          <label>
+            ブリンカー注目馬（自動）
+            <textarea id="blinkerCandidates" name="blinkerCandidates" rows="5" readonly placeholder="着用状況とコンピ・単勝順位の関係を自動表示"></textarea>
+          </label>
+          <label>
+            ブリンカー結果検証（自動）
+            <textarea id="blinkerResultSummary" name="blinkerResultSummary" rows="6" readonly placeholder="初ブリンカー／それ以外を分けて自動集計"></textarea>
+          </label>
         </div>
-        <p class="helper-text">第一段階の仮ルールです。実戦結果を見ながら、朝イチ異常・調教評価・階級指数の加点幅を調整していきます。</p>
+        <p class="helper-text">ブリンカーだけで買い判定にはしません。初着用・再着用や過去の改善を、コンピ順位と単勝順位の差と合わせて確認するための仮ルールです。</p>
       </section>
 
       <section class="section">
